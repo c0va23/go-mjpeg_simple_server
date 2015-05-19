@@ -14,6 +14,7 @@ func main() {
 
 	fileSystem := http.Dir("public")
 	serveMux.Handle("/", http.FileServer(fileSystem))
+	serveMux.HandleFunc("/jpeg", jpeg)
 
 	logger.Info("Start listen on %s", listen)
 	if err := http.ListenAndServe(listen, serveMux); nil != err {
