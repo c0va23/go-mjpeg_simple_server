@@ -2,10 +2,8 @@ package main
 
 import (
 	"net/http"
-	logging "github.com/op/go-logging"
+	"log"
 )
-
-var logger = logging.MustGetLogger("SERVER")
 
 const listen = "localhost:40000"
 
@@ -17,8 +15,8 @@ func main() {
 	serveMux.HandleFunc("/jpeg", jpeg)
 	serveMux.HandleFunc("/mjpeg", mjpeg)
 
-	logger.Info("Start listen on %s", listen)
+	log.Printf("Start listen on %s\n", listen)
 	if err := http.ListenAndServe(listen, serveMux); nil != err {
-		logger.Error(err.Error())
+		log.Printf("Error: %s", err.Error())
 	}
 }

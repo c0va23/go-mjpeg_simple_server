@@ -3,6 +3,7 @@ package main
 import (
 	"os/exec"
 	"bytes"
+	"log"
 )
 
 var source = make(chan []byte)
@@ -13,7 +14,7 @@ func init() {
 
 func sourceHandler() {
 	for {
-		logger.Debug("Start take snapshot")
+		log.Printf("Start take snapshot")
 		command := exec.Command("avconv",
 			"-f", "x11grab",
 			"-s", "1920:1080",
@@ -29,17 +30,17 @@ func sourceHandler() {
 		command.Stderr = errorBuffer
 
 		data, cmdErr := command.Output()
-		logger.Debug("End take snapshot")
+		log.Printf("End take snapshot")
 
 		if nil != cmdErr {
-			logger.Error(cmdErr.Error())
-			logger.Error("Error buffer: %s", errorBuffer)
+			log.Printf(cmdErr.Error())
+			log.Printf("Error buffer: %s", errorBuffer)
 
 			continue
 		}
 
-		logger.Debug("Start push source")
+		log.Printf("Start push source")
 		source <- data
-		logger.Debug("End push source")
+		log.Printf("End push source")
 	}
 }
