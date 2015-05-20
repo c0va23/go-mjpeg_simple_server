@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"net/http"
 	"mime/multipart"
 	"net/textproto"
@@ -30,8 +31,9 @@ func mjpeg(responseWriter http.ResponseWriter, request *http.Request) {
 	responseWriter.Header().Add("Content-Type", contentType)
 
 	for {
+		frameStartTime := time.Now()
 		partHeader := make(textproto.MIMEHeader)
-		partHeader.Add("Content-Type", "image/jpge")
+		partHeader.Add("Content-Type", "image/jpeg")
 
 		partWriter, partErr := mimeWriter.CreatePart(partHeader)
 		if nil != partErr {
@@ -43,6 +45,11 @@ func mjpeg(responseWriter http.ResponseWriter, request *http.Request) {
 		if _, writeErr := partWriter.Write(snapshot); nil != writeErr {
 			logger.Error(writeErr.Error())
 		}
+		frameEndTime := time.Now()
+
+		frameDuration := frameEndTime.Sub(frameStartTime)
+		fps := float64(time.Second) / float64(frameDuration)
+		logger.Info("Frame time: %s (%.2f)", frameDuration, fps)
 	}
 
 	logger.Info("Success request")
